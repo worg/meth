@@ -81,14 +81,14 @@ func AllBy(p Persistent, rows interface{}, cond ...interface{}) error {
 }
 
 // All works as an alias for AllBy
-func All(p Persistent, rows interface{}) error {
-	return AllBy(p, rows)
+func All(p Persistent, rows interface{}, cond ...interface{}) error {
+	return AllBy(p, rows, cond...)
 }
 
 func getId(t interface{}) (int64, error) {
 	valP := getValue(t)
 	i := util.GetStructFieldIndex(valP.Type(), `id`)
-	if len(i) > 1 || len(i) < 1 {
+	if len(i) != 1 {
 		return 0, ErrNoId
 	}
 

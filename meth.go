@@ -99,10 +99,7 @@ func getId(t interface{}) (int64, error) {
 
 func getValue(t interface{}) (rslt reflect.Value) {
 	rslt = reflect.ValueOf(t)
-	for {
-		if rslt.Kind() != reflect.Ptr {
-			break
-		}
+	for rslt.Kind() == reflect.Ptr {
 		rslt = rslt.Elem()
 	}
 

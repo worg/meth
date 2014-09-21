@@ -8,7 +8,9 @@ A wrapper around [upper.io/db](http://github.com/upper/db) to ease some repetiti
 
 ### Reasoning Behind
 
-Working with [upper.io/db](http://github.com/upper/db) sometimes becomes a little bit repetitive, so METH is an attempt to minimize the scaffolding needed in some basic tasks [fetching by id, by certain conditions].
+Working with [upper.io/db](http://github.com/upper/db) sometimes becomes a little bit repetitive, so METH is an attempt to minimize the scaffolding needed in some basic tasks [fetching by id, by certain conditions].  
+
+[![GoDoc](https://godoc.org/github.com/worg/meth?status.svg)](https://godoc.org/github.com/worg/meth)
 
 ## Docs
 ### type Persistent
@@ -55,10 +57,16 @@ Exists returns true if a record exists matching either id or the given condition
 
 ## Usage
 
+### Install
+
+```
+go get github.com/worg/meth
+```
+
 Any type must implement `Persistent` interface and return an initalized and valid db.Collection in order to use METH functions.
 
 
-__example__
+### Example
 
 ``` go
 package person

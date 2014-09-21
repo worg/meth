@@ -46,6 +46,12 @@ func AllBy(p Persistent, rows interface{}, cond ...interface{}) error
 ```
 AllBy fills rows with data from the result set matching the given conditions
 
+### func Exists
+``` go
+func Exists(p Persistent, cond ...interface{}) bool
+```
+Exists returns true if a record exists matching either id or the given conditions
+
 
 ## Usage
 
@@ -54,7 +60,7 @@ Any type must implement `Persistent` interface and return an initalized and vali
 
 __example__
 
-``` 
+``` go
 package person
 
 import (

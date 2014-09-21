@@ -119,3 +119,37 @@ func TestAllBy(t *testing.T) {
 
 	t.Log(`fetch all matching conditions OK`)
 }
+
+func TestExists(t *testing.T) {
+	b := Birthday{ID: 1}
+
+	if ok := meth.Exists(&b); !ok {
+		t.Error(`Failed to check existence by id`)
+	}
+
+	t.Log(`Check existence by id OK`)
+}
+
+func TestExsistsEqual(t *testing.T) {
+	b := Birthday{Name: `Jon Hall`}
+
+	if ok := meth.Exists(&b, db.Cond{`name`: b.Name}); !ok {
+		t.Error(`Failed to check existence by equality on field`)
+	}
+
+	t.Log(`Check existence by equality on field OK`)
+
+}
+
+func TestExsistsRange(t *testing.T) {
+	tm, _ := time.Parse(`2006-01-02`, `1950-08-07`)
+
+	b := Birthday{Born: tm}
+
+	if ok := meth.Exists(&b, db.Cond{`born >=`: tm}); !ok {
+		t.Error(`Failed to check existence by comparission on field`)
+	}
+
+	t.Log(`Check existence by comparission on field OK`)
+
+}

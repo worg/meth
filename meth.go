@@ -85,8 +85,25 @@ func All(p Persistent, rows interface{}, cond ...interface{}) error {
 	return AllBy(p, rows, cond...)
 }
 
-func getId(t interface{}) (int64, error) {
-	valP := getValue(t)
+// Exists returns true if a record exists matching either id or the given conditions
+func Exists(p Persistent, cond ...interface{}) bool {
+	col := p.Collection()
+
+	id, _ := getId(p)
+
+	if len(cond) < 1 {
+		cond = []interface{}{db.Cond{`id`: id}}
+	}
+
+	res := col.Find(cond...)
+
+	count, _ := res.Count()
+
+	return count > 0
+}
+
+func getId(p interface{}) (int64, error) {
+	valP := getValue(p)
 	i := util.GetStructFieldIndex(valP.Type(), `id`)
 	if len(i) != 1 {
 		return 0, ErrNoId

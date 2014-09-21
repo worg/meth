@@ -28,8 +28,9 @@ import (
 	"upper.io/db/util"
 )
 
+// Shared error codes
 var (
-	ErrNoId    = errors.New(`No id field found`)
+	ErrNoID    = errors.New(`No id field found`)
 	ErrNoSlice = errors.New(`Slice expected`)
 )
 
@@ -42,7 +43,7 @@ type Persistent interface {
 func One(p Persistent) error {
 	col := p.Collection()
 
-	id, err := getId(p)
+	id, err := getID(p)
 	if err != nil {
 		return err
 	}
@@ -89,7 +90,7 @@ func All(p Persistent, rows interface{}, cond ...interface{}) error {
 func Exists(p Persistent, cond ...interface{}) bool {
 	col := p.Collection()
 
-	id, _ := getId(p)
+	id, _ := getID(p)
 
 	if len(cond) < 1 {
 		cond = []interface{}{db.Cond{`id`: id}}
@@ -102,7 +103,7 @@ func Exists(p Persistent, cond ...interface{}) bool {
 	return count > 0
 }
 
-func getId(p interface{}) (int64, error) {
+func getID(p interface{}) (int64, error) {
 	valP := getValue(p)
 	i := util.GetStructFieldIndex(valP.Type(), `id`)
 	if len(i) != 1 {

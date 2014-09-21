@@ -30,8 +30,8 @@ import (
 
 // Shared error codes
 var (
-	ErrNoID    = errors.New(`No id field found`)
-	ErrNoSlice = errors.New(`Slice expected`)
+	ErrNoID    = errors.New(`no id field found`)
+	ErrNoSlice = errors.New(`slice expected`)
 )
 
 // Persistent is the interface that allows us to communicate with upper.io/db collection

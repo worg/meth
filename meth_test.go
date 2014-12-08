@@ -40,36 +40,36 @@ func init() {
 		Database: `test/example.db`, // Path to a sqlite3 database file.
 	}
 
-	conn, err = db.Open(sqlite.Adapter, settings)
-	if err != nil {
+	if conn, err = db.Open(sqlite.Adapter, settings); err != nil {
 		panic(err)
 	}
 
-	collection, err = conn.Collection(`birthdays`)
-	if err != nil {
+	if collection, err = conn.Collection(`employees`); err != nil {
 		panic(err)
 	}
 }
 
 // Taken from upper.io/db samples
-type Birthday struct {
-	ID   int       `db:"id"`
-	Name string    `db:"name"`
-	Born time.Time `db:"born"`
+type Employee struct {
+	ID       int       `db:"id"`
+	Name     string    `db:"name"`
+	LastName string    `db:"last_name"`
+	Born     time.Time `db:"born"`
+	JobID    int       `db:"job_id"`
 }
 
-func (b *Birthday) Collection() db.Collection {
+func (b *Employee) Collection() db.Collection {
 	return collection
 }
 
 func TestOne(t *testing.T) {
-	b := Birthday{ID: 1}
+	b := Employee{ID: 1}
 
 	if err := meth.One(&b); err != nil {
 		t.Error(err)
 	}
 
-	if b.Name != `Jonathan Ive` {
+	if b.Name != `Jonathan` {
 		t.Error(`Failed to fetch one row by id`)
 	}
 
@@ -77,7 +77,7 @@ func TestOne(t *testing.T) {
 }
 
 func TestOneBy(t *testing.T) {
-	b := Birthday{Name: `Linus Torvalds`}
+	b := Employee{Name: `Linus`}
 
 	if err := meth.OneBy(&b, db.Cond{`name`: b.Name}); err != nil {
 		t.Error(err)
@@ -91,14 +91,14 @@ func TestOneBy(t *testing.T) {
 }
 
 func TestAll(t *testing.T) {
-	var rows []Birthday
-	b := Birthday{}
+	var rows []Employee
+	b := Employee{}
 
 	if err := meth.All(&b, &rows); err != nil {
 		t.Error(err)
 	}
 
-	if len(rows) != 3 {
+	if len(rows) < 4 {
 		t.Error(`Failed to fetch all rows`)
 	}
 
@@ -106,8 +106,8 @@ func TestAll(t *testing.T) {
 }
 
 func TestAllBy(t *testing.T) {
-	var rows []Birthday
-	b := Birthday{}
+	var rows []Employee
+	b := Employee{}
 
 	if err := meth.AllBy(&b, &rows, db.Cond{`id <=`: 2}); err != nil {
 		t.Error(err)
@@ -121,7 +121,7 @@ func TestAllBy(t *testing.T) {
 }
 
 func TestExists(t *testing.T) {
-	b := Birthday{ID: 1}
+	b := Employee{ID: 1}
 
 	if ok := meth.Exists(&b); !ok {
 		t.Error(`Failed to check existence by id`)
@@ -131,7 +131,7 @@ func TestExists(t *testing.T) {
 }
 
 func TestExsistsEqual(t *testing.T) {
-	b := Birthday{Name: `Jon Hall`}
+	b := Employee{Name: `Jon`}
 
 	if ok := meth.Exists(&b, db.Cond{`name`: b.Name}); !ok {
 		t.Error(`Failed to check existence by equality on field`)
@@ -144,7 +144,7 @@ func TestExsistsEqual(t *testing.T) {
 func TestExsistsRange(t *testing.T) {
 	tm, _ := time.Parse(`2006-01-02`, `1950-08-07`)
 
-	b := Birthday{Born: tm}
+	b := Employee{Born: tm}
 
 	if ok := meth.Exists(&b, db.Cond{`born >=`: tm}); !ok {
 		t.Error(`Failed to check existence by comparission on field`)
@@ -152,4 +152,129 @@ func TestExsistsRange(t *testing.T) {
 
 	t.Log(`Check existence by comparission on field OK`)
 
+}
+
+func TestLimit(t *testing.T) {
+	var rows []Employee
+	b := Employee{}
+
+	if err := meth.AllOp(&b, meth.Limit(2), &rows); err != nil {
+		t.Error(`Failed to set limit on result`)
+	}
+
+	if len(rows) != 2 {
+		t.Error(`Failed to set limit on result`)
+	}
+
+	t.Log(`Set limit on result OK`)
+}
+
+func TestSkip(t *testing.T) {
+	var rows []Employee
+	b := Employee{}
+
+	if err := meth.AllOp(&b, meth.Skip(2), &rows); err != nil {
+		t.Error(`Failed to skip on result`)
+	}
+
+	if len(rows) < 2 || rows[0].Name != `Jon` {
+		t.Error(`Failed to skip on result`)
+	}
+
+	t.Log(`skip on result OK`, rows)
+}
+
+func TestSort(t *testing.T) {
+	var rows []Employee
+	b := Employee{}
+
+	if err := meth.AllOp(&b, meth.Sort(`-born`), &rows); err != nil {
+		t.Error(`Failed to sort result`)
+	}
+
+	if rows[0].Name != `Linus` {
+		t.Error(`Failed to sort result`)
+	}
+
+	t.Log(`sort result OK`, rows)
+}
+
+func TestSelect(t *testing.T) {
+	var rows []Employee
+	b := Employee{}
+
+	if err := meth.AllOp(&b, meth.Select(`job_id`), &rows); err != nil {
+		t.Error(`Failed to skip on result`)
+	}
+
+	if rows[0].Name != `` || rows[0].JobID == 0 {
+		t.Error(`Failed to select on result`)
+	}
+
+	t.Log(`select on result OK`, rows)
+}
+
+func TestWhere(t *testing.T) {
+	var row Employee
+	b := Employee{}
+
+	if err := meth.OneOp(&b, meth.Where(db.Cond{`id`: 1}), &row); err != nil {
+		t.Error(`Failed to skip on result`)
+	}
+
+	if row.Name != `Jonathan` {
+		t.Error(`Failed to apply where on result`)
+	}
+
+	t.Log(`apply where on result OK`, row)
+}
+
+func TestGroup(t *testing.T) {
+	var rows []Employee
+	b := Employee{}
+
+	if err := meth.AllOp(&b, meth.Group(`job_id`), &rows); err != nil {
+		t.Error(`Failed to group result`)
+	}
+
+	if len(rows) != 2 {
+		t.Error(`Failed to apply group result`)
+	}
+
+	t.Log(`apply group result OK`, rows)
+}
+
+func TestPaginate(t *testing.T) {
+	var rows []Employee
+	b := Employee{}
+
+	if err := meth.AllOp(&b, meth.Paginate(1, 1), &rows); err != nil {
+		t.Error(`Failed to skip on result`)
+	}
+
+	if len(rows) < 1 || rows[0].Name != `Linus` {
+		t.Error(`Failed to skip on result`)
+	}
+
+	t.Log(`paginate on result OK`, rows)
+}
+
+func TestCustomFunc(t *testing.T) {
+	var rows []Employee
+	b := Employee{}
+
+	cust := func(r db.Result) {
+		r.Select(db.Raw{`SUM(id) as id`})
+		r.Group(`job_id`).Skip(1)
+	}
+
+	if err := meth.AllOp(&b, cust, &rows); err != nil {
+		t.Error(`Failed to skip on result`)
+	}
+
+	if len(rows) < 1 || rows[0].ID != 9 {
+		t.Error(`Failed to skip on result`)
+	}
+
+	t.Log(`paginate on result OK`, rows)
 }

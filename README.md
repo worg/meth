@@ -10,50 +10,8 @@ A wrapper around [upper.io/db](http://github.com/upper/db) to ease some repetiti
 
 Working with [upper.io/db](http://github.com/upper/db) sometimes becomes a little bit repetitive, so METH is an attempt to minimize the scaffolding needed in some basic tasks [fetching by id, by certain conditions].  
 
-[![GoDoc](https://godoc.org/github.com/worg/meth?status.svg)](https://godoc.org/github.com/worg/meth)
-
 ## Docs
-### type Persistent
-``` go
-type Persistent interface {
-    Collection() db.Collection
-}
-```
-Persistent is the interface that allows us to communicate with upper.io/db collection
-
-### func One
-``` go
-func One(p Persistent) error
-```
-One fills p with one element based on the id field
-
-
-### func OneBy
-``` go
-func OneBy(p Persistent, cond ...interface{}) error
-```
-OneBy fills p with one element matching the given conditions
-
-
-### func All
-``` go
-func All(p Persistent, rows interface{}) error
-```
-All works as an alias for AllBy
-
-
-### func AllBy
-``` go
-func AllBy(p Persistent, rows interface{}, cond ...interface{}) error
-```
-AllBy fills rows with data from the result set matching the given conditions
-
-### func Exists
-``` go
-func Exists(p Persistent, cond ...interface{}) bool
-```
-Exists returns true if a record exists matching either id or the given conditions
-
+[![GoDoc](https://godoc.org/github.com/worg/meth?status.svg)](https://godoc.org/github.com/worg/meth)
 
 ## Usage
 

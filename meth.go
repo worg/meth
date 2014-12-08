@@ -191,6 +191,7 @@ func OneOp(p Persistent, operation resFunc, row interface{}, cond ...interface{}
 	return err
 }
 
+// getID Returns the id field from a struct
 func getID(p interface{}) (int64, error) {
 	valP := getValue(p)
 	i := util.GetStructFieldIndex(valP.Type(), `id`)
@@ -203,6 +204,7 @@ func getID(p interface{}) (int64, error) {
 	return id, nil
 }
 
+// getValue Returns a reflect.Value from an interface taking care of pointers when needed
 func getValue(t interface{}) (rslt reflect.Value) {
 	rslt = reflect.ValueOf(t)
 	for rslt.Kind() == reflect.Ptr {
@@ -212,6 +214,7 @@ func getValue(t interface{}) (rslt reflect.Value) {
 	return
 }
 
+// isSlice Check if an interface is a slice
 func isSlice(t interface{}) bool {
 	if k := reflect.TypeOf(t).Kind(); k == reflect.Slice {
 		return true

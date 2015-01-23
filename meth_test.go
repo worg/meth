@@ -264,7 +264,7 @@ func TestCustomFunc(t *testing.T) {
 	b := Employee{}
 
 	cust := func(r db.Result) {
-		r.Select(db.Raw{`SUM(id) as id`})
+		r.Select(db.Raw{Value:`SUM(id) as id`})
 		r.Group(`job_id`).Skip(1)
 	}
 

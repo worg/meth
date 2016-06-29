@@ -10,8 +10,10 @@ A wrapper around [upper.io/db](http://github.com/upper/db) to ease some repetiti
 
 Working with [upper.io/db](http://github.com/upper/db) sometimes becomes a little bit repetitive, so METH is an attempt to minimize the scaffolding needed in some basic tasks [fetching by id, by certain conditions].  
 
-## Docs
+## Badges
 [![GoDoc](https://godoc.org/github.com/worg/meth?status.svg)](https://godoc.org/github.com/worg/meth)
+[![Build Status](https://travis-ci.org/worg/meth.svg?branch=master)](https://travis-ci.org/worg/meth)
+[![Go Report Card](https://goreportcard.com/badge/github.com/worg/meth)](https://goreportcard.com/report/github.com/worg/meth)
 
 ## Usage
 
